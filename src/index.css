@@ -1,0 +1,376 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens
+   Palette reference (editable on Coolors):
+   https://coolors.co/fff9f5-211a2b-716978-7655e8-5737c8-ff725e-ffe4df-eee8ff-eae3ec
+   ------------------------------------------------------------------ */
+@theme {
+  /* Extra-small breakpoint: separates 320px-class phones from 360px-and-up. */
+  --breakpoint-xs: 22.5rem;
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-bg: #fff9f5;
+  --color-surface: #ffffff;
+  --color-ink: #211a2b;
+  --color-muted: #716978;
+  --color-violet: #7655e8;
+  --color-violet-deep: #5737c8;
+  --color-coral: #ff725e;
+  --color-coral-deep: #b8392a; /* text-safe coral for small type on light surfaces */
+  --color-pink-soft: #ffe4df;
+  --color-lavender: #eee8ff;
+  --color-line: #eae3ec;
+  --color-success: #247a52;
+  --color-error: #b42318;
+  --color-night: #241638;
+
+  --shadow-card: 0 1px 2px rgb(33 26 43 / 0.04), 0 10px 28px -14px rgb(33 26 43 / 0.14);
+  --shadow-card-hover: 0 2px 4px rgb(33 26 43 / 0.05), 0 22px 44px -18px rgb(87 55 200 / 0.24);
+  --shadow-nav: 0 8px 28px -16px rgb(33 26 43 / 0.18);
+  --shadow-float: 0 12px 36px -14px rgb(33 26 43 / 0.22);
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.14em;
+}
+
+:root {
+  --gradient-hero: linear-gradient(135deg, #fff0e8 0%, #f1e9ff 52%, #e6f1ff 100%);
+  --gradient-brand: linear-gradient(120deg, #7655e8 0%, #a855f7 55%, #ff725e 100%);
+  --gradient-creative: linear-gradient(145deg, #eee8ff 0%, #ffe5e0 100%);
+  --gradient-contact: linear-gradient(135deg, #241638 0%, #493078 58%, #7655e8 100%);
+  --nav-height: 76px;
+}
+
+@utility bg-gradient-hero {
+  background-image: var(--gradient-hero);
+}
+@utility bg-gradient-brand {
+  background-image: var(--gradient-brand);
+}
+@utility bg-gradient-creative {
+  background-image: var(--gradient-creative);
+}
+@utility bg-gradient-contact {
+  background-image: var(--gradient-contact);
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-height) + 16px);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+    font-size: 1rem;
+    line-height: 1.7;
+    overflow-x: clip;
+    /* Buttons and cards provide their own press feedback, so the grey tap flash is noise. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  [role="button"],
+  a {
+    touch-action: manipulation;
+  }
+
+  body.scroll-locked {
+    overflow: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-lavender);
+    color: var(--color-ink);
+  }
+
+  dialog::backdrop {
+    background: rgb(36 22 56 / 0.55);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Typography helpers
+   ------------------------------------------------------------------ */
+@layer components {
+  .eyebrow {
+    @apply font-sans text-eyebrow font-semibold uppercase text-violet-deep;
+  }
+
+  .heading-hero {
+    font-size: clamp(2.375rem, 1.4rem + 4.2vw, 4.9rem);
+    line-height: 1.04;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .heading-section {
+    font-size: clamp(1.875rem, 1.35rem + 2.3vw, 3.25rem);
+    line-height: 1.08;
+    font-weight: 700;
+  }
+
+  .heading-card {
+    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    line-height: 1.25;
+    font-weight: 600;
+  }
+
+  .lede {
+    @apply text-muted;
+    text-wrap: pretty;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+    line-height: 1.7;
+  }
+
+  /* Hand-drawn-style underline swash for headline highlights */
+  .swash {
+    position: relative;
+    display: inline-block;
+    color: var(--color-violet-deep);
+  }
+  .swash > svg {
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    bottom: -0.08em;
+    width: 104%;
+    height: 0.28em;
+    pointer-events: none;
+  }
+
+  /* Gradient fill that wipes across the headline highlight. --hl is driven by the hero timeline. */
+  .hl-fill {
+    clip-path: inset(0 var(--hl, 0%) 0 0);
+  }
+
+  /* Vertical connector drawn behind the experience timeline; --tl is scroll-linked (0 to 1). */
+  .timeline-line::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 14px;
+    bottom: 28px;
+    width: 2px;
+    border-radius: 9999px;
+    background: var(--color-line);
+    transform-origin: top;
+    transform: scaleY(var(--tl, 1));
+  }
+
+  /* Accordion height transition */
+  .expander {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s var(--ease-soft);
+  }
+  .expander[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+  .expander > * {
+    overflow: hidden;
+  }
+
+  /* Lift on hover for cards and buttons */
+  .lift {
+    transition:
+      translate 0.3s var(--ease-soft),
+      scale 0.3s var(--ease-soft),
+      box-shadow 0.3s var(--ease-soft),
+      border-color 0.3s var(--ease-soft),
+      background-color 0.3s var(--ease-soft),
+      color 0.3s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .lift:hover {
+      translate: 0 -4px;
+    }
+  }
+
+  /* Press feedback that works on touch as well as mouse */
+  .press:active {
+    translate: 0 1px;
+    scale: 0.97;
+    transition-duration: 0.08s;
+  }
+  .press-soft:active {
+    scale: 0.985;
+    transition-duration: 0.08s;
+  }
+
+  /* Light sweep across filled buttons on hover. Drawn in ::before so it sits under the label. */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+  }
+  .sheen::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 38%, var(--sheen-color, rgb(255 255 255 / 0.28)) 50%, transparent 62%);
+    translate: -140% 0;
+  }
+  @media (hover: hover) {
+    .sheen:hover::before {
+      translate: 140% 0;
+      transition: translate 0.85s var(--ease-soft);
+    }
+  }
+
+  /* Click and tap ripple, spawned by the Button component */
+  .ripple {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 9999px;
+    pointer-events: none;
+    background: var(--ripple-color, rgb(255 255 255 / 0.35));
+    animation: ripple 0.7s var(--ease-soft) forwards;
+  }
+
+  /* Dotted paper texture for decorative surfaces */
+  .dots {
+    background-image: radial-gradient(rgb(33 26 43 / 0.08) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+
+  /* ------------------------------------------------------------
+     3D hero scene. The scene root gets --rx/--ry/--px/--py/--lx/--ly/--scroll
+     from useSceneParallax; everything below is pure CSS.
+     ------------------------------------------------------------ */
+  .scene {
+    perspective: 1200px;
+    perspective-origin: 50% 40%;
+  }
+  .stage {
+    transform-style: preserve-3d;
+    transform: rotateX(calc(var(--rx, 0deg) + var(--scroll, 0) * 7deg)) rotateY(var(--ry, 0deg))
+      translateY(calc(var(--scroll, 0) * -28px)) scale(calc(1 - var(--scroll, 0) * 0.06));
+    will-change: transform;
+  }
+  /* A layer sits at depth --d (px). Deeper layers drift against the pointer for parallax. */
+  .layer {
+    transform-style: preserve-3d;
+    transform: translate3d(calc(var(--px, 0) * var(--d, 0) * -0.35px), calc(var(--py, 0) * var(--d, 0) * -0.35px), calc(var(--d, 0) * 1px));
+  }
+  /* Gentle bob and sway, staggered per element through --float-dur / --float-delay. */
+  .floaty {
+    animation: floaty var(--float-dur, 7s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+  /* Soft light that follows the pointer across glossy surfaces. */
+  .glare {
+    background: radial-gradient(circle at var(--lx, 50%) var(--ly, 40%), rgb(255 255 255 / 0.45), transparent 55%);
+    mix-blend-mode: soft-light;
+  }
+  .spin-slow {
+    animation: spin-slow var(--spin-dur, 24s) linear infinite;
+  }
+}
+
+@keyframes ripple {
+  from {
+    scale: 1;
+    opacity: 0.9;
+  }
+  to {
+    scale: 32;
+    opacity: 0;
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: var(--float-rot-a, -1.2deg);
+  }
+  50% {
+    translate: 0 -9px;
+    rotate: var(--float-rot-b, 1.2deg);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Gentle vertical bob for downward arrows */
+@keyframes bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 3px;
+  }
+}
+
+@utility icon-bob {
+  animation: bob 0.9s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------
+   Motion accessibility
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .lift:hover {
+    translate: none;
+  }
+  .press:active,
+  .press-soft:active {
+    scale: none;
+    translate: none;
+  }
+  .sheen::before,
+  .ripple {
+    display: none;
+  }
+  .floaty,
+  .spin-slow {
+    animation: none;
+  }
+  .stage {
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

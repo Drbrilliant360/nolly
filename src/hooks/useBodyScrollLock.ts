@@ -1,0 +1,10 @@
+import { useEffect } from 'react'
+
+/** Adds a scroll-lock class to <body> while `locked` is true. */
+export function useBodyScrollLock(locked: boolean) {
+  useEffect(() => {
+    if (!locked) return
+    document.body.classList.add('scroll-locked')
+    return () => document.body.classList.remove('scroll-locked')
+  }, [locked])
+}

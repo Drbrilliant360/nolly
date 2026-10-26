@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI video tools">
+  <rect x="6" y="12" width="52" height="40" rx="10" fill="#7655E8"/>
+  <path d="M27 23.5v17c0 1.6 1.75 2.6 3.1 1.75l13.2-8.5a2.05 2.05 0 0 0 0-3.5L30.1 21.75C28.75 20.9 27 21.9 27 23.5Z" fill="#fff"/>
+  <path d="M50 4l1.6 4.4L56 10l-4.4 1.6L50 16l-1.6-4.4L44 10l4.4-1.6L50 4Z" fill="#FF725E"/>
+  <path d="M12 50l1.1 2.9L16 54l-2.9 1.1L12 58l-1.1-2.9L8 54l2.9-1.1L12 50Z" fill="#FFE4DF"/>
+</svg>
